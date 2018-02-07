@@ -1,0 +1,137 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: canvas-aws
+#Based on: https://github.com/serverless/serverless/issues/2243
+#also video: https://www.youtube.com/watch?v=71cd5XerKss
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  region: us-west-1
+
+  environment:
+    elasticURL:
+      Fn::GetAtt: [ ElasticSearchInstance , DomainEndpoint ]
+    region: 'us-west-1'
+
+  iamRoleStatements:
+     - Effect: Allow
+       Action:
+          - dynamodb:DescribeTable
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+          - dynamodb:DeleteItem
+          - dynamodb:DescribeStream
+          - dynamodb:GetRecords
+          - dynamodb:GetShardIterator
+          - dynamodb:ListStreams
+          - es:UpdateElasticsearchDomainConfig
+          - es:ESHttpPut
+          - es:ESHttpDelete
+          - es:DescribeElasticsearchDomain
+          - es:DeleteElasticsearchDomain
+          - es:DescribeElasticsearchDomains
+          - es:RemoveTags
+          - es:ESHttpPost
+          - es:CreateElasticsearchDomain
+          - es:ESHttpHead
+          - es:ListTags
+          - es:AddTags
+          - es:ListDomainNames
+          - es:ESHttpGet
+          - es:DescribeElasticsearchDomainConfig
+       Resource: "*"
+
+functions:
+  CanvasDBHandler:
+    handler: canvas-db-handler.CanvasDbHandler
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - CanvasDbTable
+              - StreamArn
+          batchSize: 1
+
+
+  CanvasESMetaHandler:
+    handler: canvas-es-meta-handler.CanvasESMetaHandler
+
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt:
+              - CanvasESMetaTable
+              - StreamArn
+          batchSize: 1
+
+resources:
+  Resources:
+    CanvasDbTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: 'CanvasData'
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+          - AttributeName: "type"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+          - AttributeName: "type"
+            KeyType: "RANGE"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
+
+    CanvasESMetaTable:
+          Type: AWS::DynamoDB::Table
+          DeletionPolicy: Retain
+          Properties:
+            TableName: 'CanvasESMeta'
+            AttributeDefinitions:
+              - AttributeName: "type"
+                AttributeType: "S"
+            KeySchema:
+              - AttributeName: "type"
+                KeyType: "HASH"
+            ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+            StreamSpecification:
+              StreamViewType: NEW_AND_OLD_IMAGES
+
+
+    ElasticSearchInstance:
+      Type: AWS::Elasticsearch::Domain
+      Properties:
+        EBSOptions:
+          EBSEnabled: true
+          VolumeType: gp2
+          VolumeSize: 10
+        ElasticsearchClusterConfig:
+          InstanceType: t2.small.elasticsearch
+          InstanceCount: 2
+          DedicatedMasterEnabled: true
+          ZoneAwarenessEnabled: true
+        ElasticsearchVersion: "6.0"
