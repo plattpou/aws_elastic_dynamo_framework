@@ -2,6 +2,7 @@ class ElasticSearch {
 
     execute(method='POST', path, bodyObj, callback) {
 
+        // noinspection JSUnresolvedFunction
         let req = new AWS.HttpRequest(this.elasticSearchEndPoint);
         req.method = method;
         req.path = path;
@@ -25,14 +26,19 @@ class ElasticSearch {
             let send = new AWS.NodeHttpClient();
             //noinspection JSUnresolvedFunction
             send.handleRequest(req, null, function (httpResp) {
+
                 let respBody = '';
+
+                // noinspection JSUnresolvedFunction
                 httpResp.on('data', function (chunk) {
                     respBody += chunk;
                 });
+                // noinspection JSUnresolvedFunction
                 httpResp.on('end', function () {
                     if (callback !== null) callback(null, respBody);
 
                 });
+
             }, function (err) {
                 if (callback !== null) callback(err, null);
             });
@@ -61,7 +67,7 @@ class ElasticSearch {
             mapping._source.includes.push(field);
             mapping.properties[field] = { type : type };
 
-            //String and its canvas variants
+            //String and its enhanced variants
             if (['string','autocomplete','cvs','phone'].indexOf(type) !== -1 ) {
                 mapping.properties[field]['fields'] = {
                     raw : {
@@ -202,6 +208,18 @@ class ElasticSearch {
         this.execute("DELETE", path.join('/', indexName), null, callback);
     }
 
+    deleteAlias(aliasName, indexName, callback) {
+        let actions = {
+            actions: [{
+                remove : {
+                    index: indexName,
+                    alias: aliasName
+                }
+            }]
+        };
+        this.execute("POST","/_aliases", actions, callback);
+    }
+
 
     putAlias(aliasName, oldIndex, newIndex, callback) {
 
@@ -233,6 +251,7 @@ class ElasticSearch {
     constructor(awsCredentials, region, elasticSearchEndPoint) {
         this.awsCredentials = awsCredentials;
         this.region = region;
+        // noinspection JSUnresolvedFunction
         this.elasticSearchEndPoint = new AWS.Endpoint(elasticSearchEndPoint);
     }
 }
@@ -242,7 +261,8 @@ class Dynamo {
 
 
     putMeta(type,structure,currentIndex,nextIndex,status,callback) {
-        // Create the DynamoDB service object
+
+        let metaTable = this.metaTable;
 
         let params = {
             Item: {
@@ -252,19 +272,20 @@ class Dynamo {
                 "nextIndex" : { S: nextIndex },
                 "status" : { S: status }
             },
-            TableName: 'CanvasESMeta',
+            TableName: metaTable,
             ReturnConsumedCapacity: "TOTAL",
             ReturnValues: "ALL_OLD"
         };
 
-        // noinspection JSUnresolvedVariable
+
+        // noinspection JSUnresolvedVariable,JSUnresolvedFunction
         this.dynamoDB.putItem(params, function(err, data) {
             if (err) {
-                console.log('ERROR UPDATING CanvasESMeta:', err);
+                console.log('ERROR UPDATING ' + metaTable + ':', err);
                 if (callback !== null) callback(err,null);
             }
             else {
-                console.log('SUCESSFULY UPDATED CanvasESMeta: ', params.Item , data);
+                console.log('SUCESSFULY UPDATED ' + metaTable + ':', params.Item , data);
                 if (callback !== null) callback(null,params.Item);
             }
         });
@@ -274,8 +295,9 @@ class Dynamo {
 
     getMeta(docType, callback) {
 
+        let metaTable = this.metaTable;
         let params = {
-            TableName: 'CanvasESMeta',
+            TableName: metaTable,
             Key: {
                 'type' : {S: docType},
             }
@@ -303,24 +325,22 @@ class Dynamo {
     // noinspection JSMethodCanBeStatic
     indexData(docType, elastic, newIndexName, callback) {
 
-        callback(null, {'message':'simulated'});
+        callback(null, {'message':'simulated from ' + this.dataTable});
 
     }
 
 
-    constructor(dynamoDb) {
+    constructor(dynamoDb, metaTable, dataTable) {
         // noinspection JSUnusedGlobalSymbols
         this.dynamoDB = dynamoDb;
+        this.metaTable = metaTable;
+        this.dataTable = dataTable;
     }
 
 }
 
 
-//References:
-// https://github.com/awslabs/amazon-elasticsearch-lambda-samples/blob/master/src/kinesis_lambda_es.js
-// http://kiewic.com/aws-sdk-dynamodb
-
-// noinspection JSUnresolvedFunction
+// noinspection JSUnresolvedFunction,NpmUsedModulesInstalled
 let AWS = require('aws-sdk');
 // noinspection JSUnresolvedFunction
 let path = require('path');
@@ -332,12 +352,13 @@ AWS.config.update({region: region});
 
 // noinspection JSUnresolvedFunction
 let awsCredentials = new AWS.EnvironmentCredentials('AWS');
+// noinspection JSUnresolvedFunction
 let elasticSearchEndPoint = new AWS.Endpoint(process.env.elasticURL || '');
 let elastic = new ElasticSearch(awsCredentials, region, elasticSearchEndPoint);
 
 //noinspection JSUnresolvedFunction
 let dynamoDB = new AWS.DynamoDB({apiVersion: '2012-08-10'});
-let dynamo = new Dynamo(dynamoDB);
+let dynamo = new Dynamo(dynamoDB, process.env.metaTable || 'app-Meta', process.env.dataTable || 'app-Data');
 
 
 let processRecord = function(item, callback){
@@ -347,7 +368,7 @@ let processRecord = function(item, callback){
 
     if (record !== null) {
 
-        let docType = record['type']['S'];
+        let docType = String(record['type']['S']).toLowerCase();
         let newStructure = record['structure']['S'];
         let oldStructure = oldRecord !== null ? oldRecord['structure']['S'] : null;
 
@@ -370,39 +391,45 @@ let processRecord = function(item, callback){
 
 
                 elastic.createIndex(newIndexName, docType, newStructure, function (err, elasticResult) {
+
                     console.log('Elastic Search Said:', elasticResult);
-                    if (meta.currentIndex === '' || meta.currentIndex === 'null') {
+                    if (typeof elasticResult.error === 'undefined') {
+                        if (meta.currentIndex === '' || meta.currentIndex === 'null') {
 
-                        elastic.putAlias(docType + "_alias", '', newIndexName, function (err, aliasUpdateResponse) {
-                            console.log('Alias Update Response:', aliasUpdateResponse);
-                            dynamo.putMeta(docType, newStructure, newIndexName, 'null', 'done', function (err, updateMetaResponse) {
-                                console.log('Update Meta Response', updateMetaResponse);
-                                if (callback !== null) callback(null, {message: "Created new index " + newIndexName});
-                            });
-                        });
-
-                    } else {
-
-                        dynamo.putMeta(docType, meta.structure, meta.currentIndex, newIndexName, 'migrating', function (err, updateMetaResponse) {
-                            console.log('Update Meta Response', updateMetaResponse);
-                            dynamo.indexData(docType, elastic, newIndexName, function (err, indexDataResponse) {
-                                console.log('Index Data Response', indexDataResponse);
-                                elastic.putAlias(docType + "_alias", meta.currentIndex, newIndexName, function (err, aliasUpdateResponse) {
-                                    console.log('Alias Update Response', aliasUpdateResponse);
+                            elastic.putAlias(docType + "_alias", '', newIndexName, function (err, aliasUpdateResponse) {
+                                console.log('Alias Update Response:', aliasUpdateResponse);
+                                if (typeof aliasUpdateResponse.error === 'undefined') {
                                     dynamo.putMeta(docType, newStructure, newIndexName, 'null', 'done', function (err, updateMetaResponse) {
                                         console.log('Update Meta Response', updateMetaResponse);
-
-                                        elastic.deleteIndex(meta.currentIndex, docType, function (err, deleteIndexResponse) {
-                                            console.log("Delete Index Response",deleteIndexResponse);
-                                            if (callback !== null) callback(null, {message: "Created new index " + newIndexName});
-                                        });
-
-
+                                        if (callback !== null) callback(null, {message: "Created new index " + newIndexName});
                                     });
-                                });
-                            })
-                        });
+                                }
+                            });
 
+                        } else {
+
+                            //@todo: change to promises - Feb 7 2018
+                            dynamo.putMeta(docType, meta.structure, meta.currentIndex, newIndexName, 'migrating', function (err, updateMetaResponse) {
+                                console.log('Update Meta Response', updateMetaResponse);
+                                dynamo.indexData(docType, elastic, newIndexName, function (err, indexDataResponse) {
+                                    console.log('Index Data Response', indexDataResponse);
+                                    elastic.putAlias(docType + "_alias", meta.currentIndex, newIndexName, function (err, aliasUpdateResponse) {
+                                        console.log('Alias Update Response', aliasUpdateResponse);
+                                        dynamo.putMeta(docType, newStructure, newIndexName, 'null', 'done', function (err, updateMetaResponse) {
+                                            console.log('Update Meta Response', updateMetaResponse);
+
+                                            elastic.deleteIndex(meta.currentIndex, docType, function (err, deleteIndexResponse) {
+                                                console.log("Delete Index Response", deleteIndexResponse);
+                                                if (callback !== null) callback(null, {message: "Created new index " + newIndexName});
+                                            });
+
+
+                                        });
+                                    });
+                                })
+                            });
+
+                        }
                     }
                 });
 
@@ -416,15 +443,13 @@ let processRecord = function(item, callback){
 
 
 /** MAIN **/
-module.exports.CanvasESMetaHandler = (event, context, callback) => {
+module.exports.metaHandler = (event, context, callback) => {
 
 
     if (typeof event['Records'] !== 'undefined' && event['Records'].length > 0) {
         event['Records'].forEach(function (item) {
 
             console.log('Doing Record:', item);
-
-            let record = item['dynamodb']['NewImage'] || {};
 
             if (item['eventName'] !== 'REMOVE') {
                 processRecord(item, function (err, result) {
@@ -433,7 +458,19 @@ module.exports.CanvasESMetaHandler = (event, context, callback) => {
                     context.succeed(result);
                 });
             } else {
-                //@todo: delete index and alias
+
+                let oldRecord = item['dynamodb']['OldImage'] || null;
+                let docType = oldRecord['type']['S'];
+                let currentIndex = typeof oldRecord['currentIndex'] !== 'undefined' ? oldRecord['currentIndex']['S'] : '';
+                if (currentIndex !== '') {
+                    elastic.deleteAlias(docType + "_alias", currentIndex, function (err, deleteAliasResponse) {
+                        console.log('Delete Alias Response', deleteAliasResponse);
+                        elastic.deleteIndex(currentIndex, docType, function (err, deleteIndexResponse) {
+                            console.log('Delete Index Response', deleteIndexResponse);
+                        });
+                    });
+                }
+
             }
 
         });
