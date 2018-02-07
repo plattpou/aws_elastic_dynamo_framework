@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6ce5d0eb-6439-49dc-9867-e15b77136eb0" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/DynamoDao.js" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/ElasticSearchDao.js" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/meta-handler.js" afterPath="$PROJECT_DIR$/meta-handler.js" />
+      <change beforePath="$PROJECT_DIR$/node_modules/DynamoDao.js" afterPath="$PROJECT_DIR$/node_modules/DynamoDao.js" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -19,28 +16,28 @@
       <file leaf-file-name="ElasticSearchDao.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/node_modules/ElasticSearchDao.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+            <state relative-caret-position="906">
+              <caret line="259" column="0" lean-forward="true" selection-start-line="259" selection-start-column="0" selection-end-line="259" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DynamoDao.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="DynamoDao.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/node_modules/DynamoDao.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+            <state relative-caret-position="529">
+              <caret line="70" column="5" lean-forward="true" selection-start-line="70" selection-start-column="5" selection-end-line="70" selection-end-column="5" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="meta-handler.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="meta-handler.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/meta-handler.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="14" column="71" lean-forward="true" selection-start-line="14" selection-start-column="71" selection-end-line="14" selection-end-column="71" />
+            <state relative-caret-position="54">
+              <caret line="3" column="42" lean-forward="false" selection-start-line="3" selection-start-column="42" selection-end-line="3" selection-end-column="42" />
               <folding />
             </state>
           </provider>
@@ -97,8 +94,9 @@
       <find>awsCredentials</find>
       <find>elasticSearchEndPoint</find>
       <find>docTypeLower</find>
-      <find>docType</find>
       <find>elastic</find>
+      <find>docType</find>
+      <find>dynamoDB</find>
     </findStrings>
     <replaceStrings>
       <replace>DataTable</replace>
@@ -119,9 +117,9 @@
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/node_modules/ElasticSearch.js" />
         <option value="$PROJECT_DIR$/node_modules/Dynamo.js" />
-        <option value="$PROJECT_DIR$/node_modules/DynamoDao.js" />
         <option value="$PROJECT_DIR$/node_modules/ElasticSearchDao.js" />
         <option value="$PROJECT_DIR$/meta-handler.js" />
+        <option value="$PROJECT_DIR$/node_modules/DynamoDao.js" />
       </list>
     </option>
   </component>
@@ -221,12 +219,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1518026688931</updated>
-      <workItem from="1518026690312" duration="12447000" />
+      <workItem from="1518026690312" duration="13221000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="12447000" />
+    <option name="totallyTimeSpent" value="13221000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1680" y="41" width="1680" height="1050" extended-state="6" />
@@ -295,26 +293,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/DynamoDao.js">
+    <entry file="file://$PROJECT_DIR$/meta-handler.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+        <state relative-caret-position="54">
+          <caret line="3" column="42" lean-forward="false" selection-start-line="3" selection-start-column="42" selection-end-line="3" selection-end-column="42" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/ElasticSearchDao.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+        <state relative-caret-position="906">
+          <caret line="259" column="0" lean-forward="true" selection-start-line="259" selection-start-column="0" selection-end-line="259" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/meta-handler.js">
+    <entry file="file://$PROJECT_DIR$/node_modules/DynamoDao.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="14" column="71" lean-forward="true" selection-start-line="14" selection-start-column="71" selection-end-line="14" selection-end-column="71" />
+        <state relative-caret-position="529">
+          <caret line="70" column="5" lean-forward="true" selection-start-line="70" selection-start-column="5" selection-end-line="70" selection-end-column="5" />
           <folding />
         </state>
       </provider>
