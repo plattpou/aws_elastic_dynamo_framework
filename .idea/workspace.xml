@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6ce5d0eb-6439-49dc-9867-e15b77136eb0" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change beforePath="$PROJECT_DIR$/canvas-db-handler.js" afterPath="$PROJECT_DIR$/data-handler.js" />
-      <change beforePath="$PROJECT_DIR$/canvas-es-meta-handler.js" afterPath="$PROJECT_DIR$/meta-handler.js" />
-      <change beforePath="$PROJECT_DIR$/package.json" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/serverless.yml" afterPath="$PROJECT_DIR$/serverless.yml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/DynamoDao.js" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/node_modules/ElasticSearchDao.js" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/meta-handler.js" afterPath="$PROJECT_DIR$/meta-handler.js" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,11 +16,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
+      <file leaf-file-name="ElasticSearchDao.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/node_modules/ElasticSearchDao.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="90">
+              <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DynamoDao.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/node_modules/DynamoDao.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="18">
+              <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="meta-handler.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/meta-handler.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="108">
-              <caret line="6" column="28" lean-forward="true" selection-start-line="6" selection-start-column="28" selection-end-line="6" selection-end-column="28" />
+            <state relative-caret-position="252">
+              <caret line="14" column="71" lean-forward="true" selection-start-line="14" selection-start-column="71" selection-end-line="14" selection-end-column="71" />
               <folding />
             </state>
           </provider>
@@ -60,6 +78,13 @@
       </file>
     </leaf>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
   <component name="FindInProjectRecents">
     <findStrings>
       <find>db-data-handler</find>
@@ -67,6 +92,13 @@
       <find>CanvasESMetaTable</find>
       <find>meta</find>
       <find>canvas</find>
+      <find>path</find>
+      <find>aws</find>
+      <find>awsCredentials</find>
+      <find>elasticSearchEndPoint</find>
+      <find>docTypeLower</find>
+      <find>docType</find>
+      <find>elastic</find>
     </findStrings>
     <replaceStrings>
       <replace>DataTable</replace>
@@ -84,8 +116,12 @@
         <option value="$PROJECT_DIR$/db-data-handler.js" />
         <option value="$PROJECT_DIR$/data-handler.js" />
         <option value="$PROJECT_DIR$/serverless.yml" />
-        <option value="$PROJECT_DIR$/meta-handler.js" />
         <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/node_modules/ElasticSearch.js" />
+        <option value="$PROJECT_DIR$/node_modules/Dynamo.js" />
+        <option value="$PROJECT_DIR$/node_modules/DynamoDao.js" />
+        <option value="$PROJECT_DIR$/node_modules/ElasticSearchDao.js" />
+        <option value="$PROJECT_DIR$/meta-handler.js" />
       </list>
     </option>
   </component>
@@ -143,6 +179,11 @@
               <item name="aws_elastic_dynamo_framework" type="b2602c69:ProjectViewProjectNode" />
               <item name="aws_elastic_dynamo_framework" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
+            <path>
+              <item name="aws_elastic_dynamo_framework" type="b2602c69:ProjectViewProjectNode" />
+              <item name="aws_elastic_dynamo_framework" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="node_modules" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -180,12 +221,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1518026688931</updated>
-      <workItem from="1518026690312" duration="8653000" />
+      <workItem from="1518026690312" duration="12447000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="8653000" />
+    <option name="totallyTimeSpent" value="12447000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1680" y="41" width="1680" height="1050" extended-state="6" />
@@ -254,10 +295,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/DynamoDao.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="1" column="0" lean-forward="true" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/ElasticSearchDao.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/meta-handler.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="28" lean-forward="true" selection-start-line="6" selection-start-column="28" selection-end-line="6" selection-end-column="28" />
+        <state relative-caret-position="252">
+          <caret line="14" column="71" lean-forward="true" selection-start-line="14" selection-start-column="71" selection-end-line="14" selection-end-column="71" />
           <folding />
         </state>
       </provider>
