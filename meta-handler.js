@@ -1,9 +1,9 @@
 // noinspection JSUnresolvedFunction,NpmUsedModulesInstalled
 let AWS = require('aws-sdk');
 // noinspection ES6ShorthandObjectProperty,NpmUsedModulesInstalled
-let {ElasticSearchDao} = require('ElasticSearchDao');
+let {ElasticSearchService} = require('ElasticSearchService');
 // noinspection ES6ShorthandObjectProperty,NpmUsedModulesInstalled
-let {DynamoDao} = require('DynamoDao');
+let {DynamoService} = require('DynamoService');
 
 //noinspection JSUnresolvedFunction,JSUnresolvedVariable
 let region = process.env.region || 'us-west-1';
@@ -12,11 +12,11 @@ AWS.config.update({region: region});
 
 // noinspection JSUnresolvedFunction
 let elasticSearchEndPoint = new AWS.Endpoint(process.env.elasticURL || '');
-let elastic = new ElasticSearchDao(AWS, region, elasticSearchEndPoint);
+let elastic = new ElasticSearchService(AWS, region, elasticSearchEndPoint);
 
 //noinspection JSUnresolvedFunction
 let dynamoDB = new AWS.DynamoDB({apiVersion: '2012-08-10'});
-let dynamo = new DynamoDao(dynamoDB, process.env.metaTable || 'app-Meta', process.env.dataTable || 'app-Data');
+let dynamo = new DynamoService(dynamoDB, process.env.metaTable || 'app-Meta', process.env.dataTable || 'app-Data');
 
 
 let processRecord = function(item, callback){
