@@ -15,9 +15,19 @@ let elasticSearchEndPoint = new AWS.Endpoint(process.env.elasticURL || '');
 let elastic = new ElasticSearchService(AWS, region, elasticSearchEndPoint);
 
 //noinspection JSUnresolvedFunction
-let dynamoDB = new AWS.DynamoDB({apiVersion: '2012-08-10'});
-let dynamo = new DynamoService(dynamoDB, process.env.metaTable || 'app-Meta', process.env.dataTable || 'app-Data');
+let dynamo = new DynamoService(AWS, process.env.metaTable || 'app-Meta', process.env.dataTable || 'app-Data');
 
+// noinspection JSMethodCanBeStatic
+let indexData = function(docType, elastic, newIndexName, callback) {
+
+    dynamo.getAllData(docType,function(err, page){
+        console.log('pagination page',err, page);
+        if (typeof page.finished !== 'undefined' && page.finished === true) {
+            callback(err, page);
+        }
+    });
+
+};
 
 let processRecord = function(item, callback){
 
@@ -70,7 +80,7 @@ let processRecord = function(item, callback){
                             //@todo: change to promises - Feb 7 2018
                             dynamo.putMeta(docType, meta.structure, meta.currentIndex, newIndexName, 'migrating', function (err, updateMetaResponse) {
                                 console.log('Update Meta Response', updateMetaResponse);
-                                dynamo.indexData(docType, elastic, newIndexName, function (err, indexDataResponse) {
+                                indexData(docType, elastic, newIndexName, function (err, indexDataResponse) {
                                     console.log('Index Data Response', indexDataResponse);
                                     elastic.putAlias(docType + "_alias", meta.currentIndex, newIndexName, function (err, aliasUpdateResponse) {
                                         console.log('Alias Update Response', aliasUpdateResponse);
@@ -134,7 +144,6 @@ module.exports.metaHandler = (event, context, callback) => {
 
         });
     }
-
 
 
 };
