@@ -22,9 +22,41 @@ let indexData = function(docType, elastic, newIndexName, callback) {
 
     dynamo.getAllData(docType,function(err, page){
         console.log('pagination page',err, page);
-        if (typeof page.finished !== 'undefined' && page.finished === true) {
-            callback(err, page);
+
+        //noinspection JSUnresolvedVariable
+        if (typeof page.Items !== 'undefined' && page.Items.length > 0) {
+
+
+
+
+            let promises = [];
+            page.Items.forEach(function(item){
+                console.log('item:', item);
+                promises.push(new Promise(function(resolve){
+                    elastic.putDocument(newIndexName,item,function(err,result){
+                        if (err) {
+                            console.log('Error putting document in ' + newIndexName, err);
+                        } else {
+                            console.log('Indexed to ' + newIndexName, result);
+                        }
+                        resolve(result);
+                    });
+                }));
+            });
+
+            Promise.all(promises,function(){
+
+                if (typeof page.finished !== 'undefined' && page.finished === true) {
+                    callback(null,{"message":"done re-indexing existing data"});
+                }
+
+            });
+
+        } else {
+            callback(null,{"message":"done re-indexing empty data"})
         }
+
+
     });
 
 };
