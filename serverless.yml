@@ -120,4 +120,4 @@ resources:
           InstanceCount: 2
           DedicatedMasterEnabled: true
           ZoneAwarenessEnabled: true
-        ElasticsearchVersion: "6.0"
+        ElasticsearchVersion: "5.5"

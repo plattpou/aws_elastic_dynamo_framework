@@ -93,7 +93,7 @@ let processRecord = function(item, callback){
 
                 elastic.createIndex(newIndexName, docType, newStructure, function (err, elasticResult) {
 
-                    console.log('Elastic Search Said:', elasticResult);
+                    console.log('Elastic Search Said:', err, elasticResult);
                     if (typeof elasticResult.error === 'undefined') {
                         if (meta.currentIndex === '' || meta.currentIndex === 'null') {
 
