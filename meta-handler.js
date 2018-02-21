@@ -27,9 +27,6 @@ let indexData = function(docType, elastic, newIndexName, callback) {
         //noinspection JSUnresolvedVariable
         if (typeof page.Items !== 'undefined' && page.Items.length > 0) {
 
-
-
-
             let promises = [];
             // noinspection JSUnresolvedVariable
             page.Items.forEach(function(item){
@@ -47,15 +44,16 @@ let indexData = function(docType, elastic, newIndexName, callback) {
             });
 
             // noinspection JSUnresolvedFunction
-            Promise.all(promises,function(){
-
+            Promise.all(promises).then(function (result) {
+                console.log('Finished Pagination Items', page,result);
                 if (typeof page.finished !== 'undefined' && page.finished === true) {
+                    console.log("FINISHED RE-INDEXING");
                     callback(null,{"message":"done re-indexing existing data"});
                 }
-
             });
 
         } else {
+            console.log("FINISHED EMPTY RE-INDEXING");
             callback(null,{"message":"done re-indexing empty data"})
         }
 
@@ -87,11 +85,13 @@ let processRecord = function(item, callback){
 
                 //calculate new index name
                 let newIndexName = docType + "_index_1";
-                if (meta.currentIndex !== '' && meta.currentIndex !== 'null') {
+                console.log('Current index is: ', meta.currentIndex);
+                if (typeof meta.currentIndex !== 'undefined' && meta.currentIndex !== '' && meta.currentIndex !== 'null') {
                     let number = parseInt(meta.currentIndex.substr(meta.currentIndex.lastIndexOf("_") + 1)) + 1;
                     newIndexName = docType + "_index_" + number;
                 }
                 newIndexName = String(newIndexName).toLowerCase();
+                console.log('New index is: ', newIndexName);
 
 
                 elastic.createIndex(newIndexName, docType, newStructure, function (err, elasticResult) {

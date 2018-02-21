@@ -22,25 +22,30 @@ let dynamo = new DynamoService(AWS, process.env.metaTable || 'app-Meta', process
 let processRecord = function(event, item, callback){
 
     let record = item['dynamodb']['NewImage'] || item['dynamodb']['OldImage'] || null;
-    let docType = record['type']['S'];
+    let data = {
+        id : record['id']['S'],
+        type: record['type']['S'],
+        content : record['content']['S']
+    };
 
     if (record !== null) {
-        dynamo.getMeta(docType, function (err, meta) {
+        dynamo.getMeta(data.type, function (err, meta) {
 
             let promises = [];
             ['currentIndex','nextIndex'].forEach(function (idx) {
-                if ((meta[idx] || '') !== '') {
+                let index = meta[idx] || '';
+                if (index !== '' && index !== 'null') {
                     let method = event === 'REMOVE' ? 'DELETE' : 'PUT';
 
                     promises.push(new Promise(function (resolve) {
 
-                        console.log("Sending " + method + " to ES index " + meta[idx]);
+                        console.log("Sending " + method + " to ES index " + index);
                         if (method === 'DELETE') {
-                            elastic.deleteDocument(meta[idx], record, function (err, response) {
+                            elastic.deleteDocument(index, data, function (err, response) {
                                 resolve({"err": err, "response": response});
                             });
                         } else {
-                            elastic.putDocument(meta[idx], record, function (err, response) {
+                            elastic.putDocument(index, data, function (err, response) {
                                 resolve({"err": err, "response": response});
                             });
                         }
@@ -60,7 +65,7 @@ let processRecord = function(event, item, callback){
 
 // noinspection JSUnresolvedVariable
 /** MAIN **/
-module.exports.metaHandler = (event, context, callback) => {
+module.exports.dataHandler = (event, context, callback) => {
 
 
     if (typeof event['Records'] !== 'undefined' && event['Records'].length > 0) {
