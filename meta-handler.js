@@ -1,20 +1,21 @@
 // noinspection JSUnresolvedFunction,NpmUsedModulesInstalled
 let AWS = require('aws-sdk');
-// noinspection ES6ShorthandObjectProperty,NpmUsedModulesInstalled
+// noinspection ES6ShorthandObjectProperty,NpmUsedModulesInstalled,JSUnresolvedFunction
 let {ElasticSearchService} = require('ElasticSearchService');
-// noinspection ES6ShorthandObjectProperty,NpmUsedModulesInstalled
+// noinspection ES6ShorthandObjectProperty,NpmUsedModulesInstalled,JSUnresolvedFunction
 let {DynamoService} = require('DynamoService');
 
 //noinspection JSUnresolvedFunction,JSUnresolvedVariable
 let region = process.env.region || 'us-west-1';
+// noinspection JSUnresolvedVariable
 AWS.config.update({region: region});
 
 
-// noinspection JSUnresolvedFunction
+// noinspection JSUnresolvedFunction,JSUnresolvedVariable
 let elasticSearchEndPoint = new AWS.Endpoint(process.env.elasticURL || '');
 let elastic = new ElasticSearchService(AWS, region, elasticSearchEndPoint);
 
-//noinspection JSUnresolvedFunction
+//noinspection JSUnresolvedFunction,JSUnresolvedVariable
 let dynamo = new DynamoService(AWS, process.env.metaTable || 'app-Meta', process.env.dataTable || 'app-Data');
 
 // noinspection JSMethodCanBeStatic
@@ -30,6 +31,7 @@ let indexData = function(docType, elastic, newIndexName, callback) {
 
 
             let promises = [];
+            // noinspection JSUnresolvedVariable
             page.Items.forEach(function(item){
                 console.log('item:', item);
                 promises.push(new Promise(function(resolve){
@@ -44,6 +46,7 @@ let indexData = function(docType, elastic, newIndexName, callback) {
                 }));
             });
 
+            // noinspection JSUnresolvedFunction
             Promise.all(promises,function(){
 
                 if (typeof page.finished !== 'undefined' && page.finished === true) {
@@ -143,6 +146,7 @@ let processRecord = function(item, callback){
 
 
 
+// noinspection JSUnresolvedVariable
 /** MAIN **/
 module.exports.metaHandler = (event, context, callback) => {
 
